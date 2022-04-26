@@ -59,12 +59,13 @@ def mars_news(browser):
 # ### Featured Images
 
 
-# Visit URL
-url = 'https://spaceimages-mars.com'
-browser.visit(url)
+
 
 def featured_image(browser):
-
+    # Visit URL
+    url = 'https://spaceimages-mars.com'
+    browser.visit(url)
+    
     # Find and click the full image button
     full_image_elem = browser.find_by_tag('button')[1]
     full_image_elem.click()
