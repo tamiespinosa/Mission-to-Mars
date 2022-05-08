@@ -22,6 +22,7 @@ def scrape_all():
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
+        "hemisphere_images": hemisphere_data(browser),
         "last_modified": dt.datetime.now()
     }
 
@@ -152,6 +153,8 @@ def hemisphere_data(browser):
 
     # Quit the browser
     browser.quit()
+    #Return list of dictionaries from scrapped data
+    return hemisphere_image_urls 
 
 if __name__ == "__main__":
 
