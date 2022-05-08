@@ -103,6 +103,55 @@ def mars_facts():
     # Convert dataframe into HTML format, add bootstrap
     return df.to_html(classes="table table-striped")
 
+def hemisphere_data(browser):
+    #  Use browser to visit the URL 
+    url = 'https://marshemispheres.com/'
+    browser.visit(url)
+
+    # Convert the browser html to a soup object
+    html = browser.html
+    hemisphere_img = soup(html, 'html.parser')
+
+    #Create list of items with each image / link information
+    hemisphere_img_info = hemisphere_img.find_all('div', class_ = 'item')
+
+    # Create a list to hold the images and titles.
+    hemisphere_image_urls = []
+
+    # Write code to retrieve the image urls and titles for each hemisphere.
+
+    for img_item in hemisphere_img_info:
+    
+        hemispheres = {}
+
+        #Get image title text    
+        img_title = img_item.find('h3').get_text() 
+        #Use image title to click on the link that takes you to each full resolution image
+        browser.click_link_by_partial_text(img_title)
+
+        #Convert new website into beautiful soup item 
+        html = browser.html
+        img_info = soup(html,'html.parser')
+        
+        #Find tags to lead you to the full resolution image URL
+        img = img_info.find('div', class_= 'downloads')
+        img_url_tag = img.find('a')
+        img_url = img.a['href']
+
+        # Use partial URL to create full URL
+        img_url_full = url + img_url
+
+        #Create a dictionary that holds image title and full URL
+        hemispheres = {'Title':img_title, 'Img_url': img_url_full}
+    
+        #Append dictionary to a list to store the information for all images
+        hemisphere_image_urls.append(hemispheres)
+    
+        #Go back to the main page 
+        browser.back()
+
+    # Quit the browser
+    browser.quit()
 
 if __name__ == "__main__":
 
