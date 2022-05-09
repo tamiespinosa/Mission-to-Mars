@@ -22,7 +22,7 @@ def scrape_all():
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
-        "hemisphere_images": hemisphere_data(browser),
+        "hemispheres": hemisphere_data(browser),
         "last_modified": dt.datetime.now()
     }
 
@@ -125,31 +125,36 @@ def hemisphere_data(browser):
     
         hemispheres = {}
 
-        #Get image title text    
-        img_title = img_item.find('h3').get_text() 
-        #Use image title to click on the link that takes you to each full resolution image
-        browser.click_link_by_partial_text(img_title)
+        try:
+            #Get image title text    
+            img_title = img_item.find('h3').get_text() 
+            #Use image title to click on the link that takes you to each full resolution image
+            browser.click_link_by_partial_text(img_title)
 
-        #Convert new website into beautiful soup item 
-        html = browser.html
-        img_info = soup(html,'html.parser')
+            #Convert new website into beautiful soup item 
+            html = browser.html
+            img_info = soup(html,'html.parser')
+            
+            #Find tags to lead you to the full resolution image URL
+            img = img_info.find('div', class_= 'downloads')
+            img_url_tag = img.find('a')
+            img_url = img.a['href']
+
+            # Use partial URL to create full URL
+            img_url_full = url + img_url
+
+            #Create a dictionary that holds image title and full URL
+            hemispheres = {'title':img_title, 'img_url': img_url_full}
+    
+            #Append dictionary to a list to store the information for all images
+            hemisphere_image_urls.append(hemispheres)
+            
+            #Go back to the main page 
+            browser.back()
         
-        #Find tags to lead you to the full resolution image URL
-        img = img_info.find('div', class_= 'downloads')
-        img_url_tag = img.find('a')
-        img_url = img.a['href']
-
-        # Use partial URL to create full URL
-        img_url_full = url + img_url
-
-        #Create a dictionary that holds image title and full URL
-        hemispheres = {'Title':img_title, 'Img_url': img_url_full}
-    
-        #Append dictionary to a list to store the information for all images
-        hemisphere_image_urls.append(hemispheres)
-    
-        #Go back to the main page 
-        browser.back()
+        except AttributeError:
+            return None
+        
 
     # Quit the browser
     browser.quit()
